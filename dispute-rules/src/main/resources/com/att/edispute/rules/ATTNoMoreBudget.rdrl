@@ -1,0 +1,19 @@
+package com.att.edispute.rules;
+
+import java.lang.Number;
+
+rule "ATTNoMoreBudget"
+	dialect "mvel"
+	salience 100
+	when
+		edisp : eDisputeResolution( status == true )
+		AccountInfo( $aa : adjustmentAmmount)
+		attInfo : ATTInfo( adjustmentAmountWeeklyRemain < $aa || adjustmentAmountMonthlyRemain < $aa || adjustmentAmount6MonthsRemain < $aa )
+	then
+		System.out.println( "[ERROR]:Insufficient budget, [adjustmentAmount=" + $aa + "]" );
+		modify( edisp ) {
+				setStatus( false ), 
+				setExplanation( "Insufficient budget" ), 
+				setShortExplanation( "Insufficient budget" )
+		}
+end

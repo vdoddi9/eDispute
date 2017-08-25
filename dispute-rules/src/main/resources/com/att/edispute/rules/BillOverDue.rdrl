@@ -1,0 +1,22 @@
+package com.att.edispute.rules;
+
+import java.lang.Number;
+
+rule "BillOverDue"
+	dialect "mvel"
+	salience 80
+	when
+		edisp : eDisputeResolution( status == true )
+		ceInfo : CustomerEligibilityInfo( billOverDue == true )
+	then
+		System.out.println( "[ERROR]:Customer Bill Over Due Check - from GUIDED RULE" );
+		modify( edisp ) {
+				setStatus( false ), 
+				setExplanation( "eDispute resolution failed. Customer Bill Overdue" ), 
+				setShortExplanation( "eDispute failed" ), 
+				setDisplayTitle( "Thank you for submitting the dispute." ), 
+				setDisplaySubTitle( "Your dispute confirmation number is: 133456978." ), 
+				setDisplayDetailText( "We cannot accept your dispute request as of now because our system indicates that further investigation is required." ), 
+				setDisplayNote( "Note: Investigations are usually concluded within 30 days of the date we receive your request. At the conclusion of the investigation, you will get a response from AT&T via an email and online alert." )
+		}
+end

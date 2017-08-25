@@ -1,0 +1,22 @@
+package com.att.edispute.rules;
+
+import java.lang.Number;
+
+rule "CustomerHistoricalAdjustmentAmount"
+	dialect "mvel"
+	salience 60
+	when
+		edisp : eDisputeResolution( status == true )
+		ceInfo : CustomerEligibilityInfo( histAdjustmentsAmmount > 100.0 )
+	then
+		System.out.println( "[ERROR]:Historical Adjustment Amount greater then $100 for the last 7 days period - from GUIDED RULE" );
+		modify( edisp ) {
+				setStatus( false ), 
+				setExplanation( "[ERROR]:Historical Adjustment Amount greater then $100 for the last 7 days period" ), 
+				setShortExplanation( "[ERROR]:Historical Adjustment Amount" ), 
+				setDisplayTitle( "Thank you for submitting the dispute." ), 
+				setDisplaySubTitle( "Your dispute confirmation number is: 133456978" ), 
+				setDisplayDetailText( "We cannot accept your dispute request as of now because our system indicates that you exceeded the total adjustment amount and further investigation is required." ), 
+				setDisplayNote( "Note: Investigations are usually concluded within 30 days of the date we receive your request. At the conclusion of the investigation, you will get a response from AT&T via an email and online alert." )
+		}
+end

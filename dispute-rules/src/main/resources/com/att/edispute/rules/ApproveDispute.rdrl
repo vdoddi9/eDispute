@@ -1,0 +1,20 @@
+package com.att.edispute.rules;
+
+import java.lang.Number;
+
+rule "ApproveDispute"
+	dialect "mvel"
+	salience 1
+	when
+		edisp : eDisputeResolution( status == true , creditAmmount <= 5.0 )
+	then
+		System.out.println( "[Success]: Approve Request - from GUIDED RULE" );
+		modify( edisp ) {
+				setStatus( false ), 
+				setExplanation( "Success" ), 
+				setShortExplanation( "Success" ), 
+				setDisplayTitle( "Thank you for submitting the dispute." ), 
+				setDisplaySubTitle( "Your dispute confirmation number is: 133456999" ), 
+				setDisplayDetailText( "We have credited your account and a new adjustment will appear in your next billing statement and online transactions." )
+		}
+end
